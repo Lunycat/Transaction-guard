@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: transaction
+  datasource:
+    url: ${TRANSACTION_DB_URL:}
+    username: ${TRANSACTION_DB_USERNAME:}
+    password: ${TRANSACTION_DB_PASSWORD:}
+
+server:
+  port: 8080
