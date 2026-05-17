@@ -1,32 +1,26 @@
 package com.example.transaction.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import com.example.transaction.enumType.TransactionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionRequest {
+public class TransactionDTO {
 
-    @NotNull
+    private Long id;
     private Long userId;
-
-    @Positive
     private BigDecimal amount;
-
-    @NotBlank
-    @Size(max = 3)
     private String currency;
-
-    @NotBlank
     private String merchant;
+    private TransactionStatus status;
+    private Instant createdAt;
+    private Instant updatedAt;
 }

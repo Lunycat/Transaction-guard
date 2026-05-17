@@ -1,14 +1,7 @@
 package com.example.transaction.entity;
 
 import com.example.transaction.enumType.TransactionStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,14 +27,20 @@ public class Transaction {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @OneToOne
+    @Column(nullable = false)
     private Long userId;
 
+    @Column(nullable = false)
     private BigDecimal amount;
+
+    @Column(nullable = false, length = 3)
     private String currency;
+
+    @Column(nullable = false)
     private String merchant;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TransactionStatus status;
 
     @CreationTimestamp
