@@ -29,4 +29,11 @@ public class TransactionService {
         publisher.publishEvent(event);
         return mapper.toTransactionDTO(saved);
     }
+
+    @Transactional(readOnly = true)
+    public TransactionDTO findById(Long id) {
+        Transaction transaction = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Not found transaction with id = " + id));
+        return mapper.toTransactionDTO(transaction);
+    }
 }
