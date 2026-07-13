@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface TransactionOutboxRepository extends JpaRepository<TransactionOutbox, Long> {
-    List<Long> findTop100IdsByStatusPENDING();
+    List<Long> findTop100ByStatusOrderByCreatedAtAsc(OutboxStatus status);
 }

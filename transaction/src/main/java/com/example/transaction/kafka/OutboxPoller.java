@@ -35,7 +35,7 @@ public class OutboxPoller {
 
     @Scheduled(fixedDelay = 2000)
     public void pollAndSend() {
-        List<Long> pendingIds = repository.findTop100IdsByStatusPENDING();
+        List<Long> pendingIds = repository.findTop100ByStatusOrderByCreatedAtAsc(OutboxStatus.PENDING);
 
         for (Long id : pendingIds) {
             processSingleMessage(id);
