@@ -11,13 +11,13 @@ import java.util.List;
 
 @Getter
 @Component
-public class KafkaListenerTest {
+public class KafkaListenerDLQTest {
 
     private final List<ConsumerRecord<String, Object>> dlqRecords = Collections.synchronizedList(new ArrayList<>());
 
-    @KafkaListener(topics = "tx.created")
-    public void testListener(ConsumerRecord<String, Object> record) {
-        System.out.println(">>> Got record: " + record.value());
+    @KafkaListener(topics = "tx.created.dlq")
+    public void testListenerDLQ(ConsumerRecord<String, Object> record) {
+        System.out.println(">>> DLQ Listener got record from topic: " + record.topic());
         dlqRecords.add(record);
     }
 

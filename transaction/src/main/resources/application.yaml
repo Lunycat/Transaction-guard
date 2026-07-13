@@ -3,6 +3,9 @@ spring:
     active: dev,local
   application:
     name: transaction
+  task:
+    scheduling:
+      enabled: true
 
 server:
   port: 8080
