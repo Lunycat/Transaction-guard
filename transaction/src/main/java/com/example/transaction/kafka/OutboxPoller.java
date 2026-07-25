@@ -35,17 +35,15 @@ public class OutboxPoller {
 
     @Scheduled(fixedDelay = 2000)
     public void pollAndSend() {
-        List<Long> pendingIds = repository.findTop100ByStatusOrderByCreatedAtAsc(OutboxStatus.PENDING);
+        List<TransactionOutbox> pending = repository.findTop100ByStatusOrderByCreatedAtAsc(OutboxStatus.PENDING);
 
-        for (Long id : pendingIds) {
-            processSingleMessage(id);
+        for (TransactionOutbox msg : pending) {
+            processSingleMessage(msg);
         }
     }
 
     @Transactional
-    public void processSingleMessage(Long id) {
-        TransactionOutbox msg = repository.findById(id).orElseThrow();
-
+    public void processSingleMessage(TransactionOutbox msg) {
         try {
             TransactionEvent event = gson.fromJson(msg.getPayload(), TransactionEvent.class);
             kafkaTemplate.send(TOPIC, event).get(5, TimeUnit.SECONDS);
@@ -53,7 +51,7 @@ public class OutboxPoller {
             msg.setStatus(OutboxStatus.SENT);
             repository.save(msg);
         } catch (Exception e) {
-            log.error("Failed: {}", id, e);
+            log.error("Failed: {}", msg, e);
         }
     }
 }

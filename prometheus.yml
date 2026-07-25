@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'transaction-guard'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      # Т.к. приложение запущено локально (IDE/Gradle), Docker стучится в хост через этот адрес
+      - targets: ['host.docker.internal:8080']
+        labels:
+          env: 'dev'
+          service: 'transaction-guard'

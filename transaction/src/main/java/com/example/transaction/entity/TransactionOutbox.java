@@ -1,6 +1,8 @@
 package com.example.transaction.entity;
 
+import com.example.transaction.dto.TransactionEvent;
 import com.example.transaction.enumType.OutboxStatus;
+import com.google.gson.Gson;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -28,6 +30,12 @@ import java.util.UUID;
 @Entity
 @Table(name = "transactions_outbox")
 public class TransactionOutbox {
+
+    public TransactionOutbox(TransactionEvent event, OutboxStatus status, Gson gson) {
+        this.eventId = event.getEventId();
+        this.status = status;
+        this.payload = gson.toJson(event);
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

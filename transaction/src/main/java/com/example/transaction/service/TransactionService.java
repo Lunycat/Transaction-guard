@@ -39,10 +39,7 @@ public class TransactionService {
         transaction.setStatus(TransactionStatus.PENDING);
         Transaction saved = transactionRepository.save(transaction);
         TransactionEvent event = mapper.toTransactionEvent(saved);
-        TransactionOutbox transactionOutbox = new TransactionOutbox();
-        transactionOutbox.setEventId(event.getEventId());
-        transactionOutbox.setStatus(OutboxStatus.PENDING);
-        transactionOutbox.setPayload(gson.toJson(event));
+        TransactionOutbox transactionOutbox = new TransactionOutbox(event, OutboxStatus.PENDING, gson);
         transactionOutboxRepository.save(transactionOutbox);
         return mapper.toTransactionDTO(saved);
     }
