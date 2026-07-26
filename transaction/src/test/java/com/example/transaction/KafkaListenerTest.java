@@ -13,15 +13,14 @@ import java.util.List;
 @Component
 public class KafkaListenerTest {
 
-    private final List<ConsumerRecord<String, Object>> dlqRecords = Collections.synchronizedList(new ArrayList<>());
+    private final List<ConsumerRecord<String, Object>> records = Collections.synchronizedList(new ArrayList<>());
 
     @KafkaListener(topics = "tx.created")
     public void testListener(ConsumerRecord<String, Object> record) {
-        System.out.println(">>> Got record: " + record.value());
-        dlqRecords.add(record);
+        records.add(record);
     }
 
     public void clear() {
-        dlqRecords.clear();
+        records.clear();
     }
 }

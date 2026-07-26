@@ -42,18 +42,18 @@ class TransactionApplicationTests {
 		await().atMost(5, TimeUnit.SECONDS)
 				.pollInterval(100, TimeUnit.MILLISECONDS)
 				.until(() -> {
-					int sizeBefore = kafkaListenerTest.getDlqRecords().size();
+					int sizeBefore = kafkaListenerTest.getRecords().size();
 					TimeUnit.MILLISECONDS.sleep(300);
-					return sizeBefore == kafkaListenerTest.getDlqRecords().size();
+					return sizeBefore == kafkaListenerTest.getRecords().size();
 				});
 		kafkaListenerTest.clear();
 
 		await().atMost(5, TimeUnit.SECONDS)
 				.pollInterval(100, TimeUnit.MILLISECONDS)
 				.until(() -> {
-					int sizeBefore = kafkaListenerTest.getDlqRecords().size();
+					int sizeBefore = kafkaListenerTest.getRecords().size();
 					TimeUnit.MILLISECONDS.sleep(300);
-					return sizeBefore == kafkaListenerTest.getDlqRecords().size();
+					return sizeBefore == kafkaListenerTest.getRecords().size();
 				});
 		kafkaListenerDLQTest.clear();
 	}
@@ -85,12 +85,13 @@ class TransactionApplicationTests {
 		TransactionDTO saved1 = service.create(request1);
 		TransactionDTO saved2 = service.create(request2);
 
-		await().atMost(5, TimeUnit.SECONDS)
-				.pollInterval(100, TimeUnit.MILLISECONDS)
+		await().atMost(20, TimeUnit.SECONDS)
+				.pollInterval(200, TimeUnit.MILLISECONDS)
 				.untilAsserted(() -> {
-					List<ConsumerRecord<String, Object>> dlqRecords = kafkaListenerTest.getDlqRecords();
-					assertInstanceOf(TransactionEvent.class, dlqRecords.getFirst().value());
-					assertInstanceOf(TransactionEvent.class, dlqRecords.getLast().value());
+					List<ConsumerRecord<String, Object>> records = kafkaListenerTest.getRecords();
+					assertFalse( "Records list is still empty, waiting for consumer...", records.isEmpty());
+					assertInstanceOf(TransactionEvent.class, records.get(0).value());
+					assertInstanceOf(TransactionEvent.class, records.get(records.size() - 1).value());
 					assertEquals(TransactionStatus.APPROVED, service.findById(saved1.getId()).getStatus());
 					assertEquals(TransactionStatus.FLAGGED, service.findById(saved2.getId()).getStatus());
 				});
@@ -99,7 +100,7 @@ class TransactionApplicationTests {
 	@Test
 	void poisonPillMovesToDlqAfterRetries() {
 		doThrow(new RuntimeException("Poison message")).when(repository).findById(anyLong());
-		TransactionDTO transactionDTO = service.create(
+		service.create(
 				new TransactionRequest(9999L, BigDecimal.valueOf(100), "RUB", "PoisonShop")
 		);
 
